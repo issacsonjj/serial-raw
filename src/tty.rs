@@ -25,8 +25,6 @@ impl TTYPort {
             libc::open(cstr.as_ptr(), O_RDWR, 0)
         };
 
-        println!("fd = {}", fd);
-
         if fd < 0 {
             return Err(format!("open port {} fail", path.to_str().unwrap()));
         }
@@ -47,32 +45,27 @@ impl TTYPort {
             let ret = tcgetattr(fd, &mut t as *mut termios);
 
             if ret < 0 {
-                println!("get attr fail: {}", ret);
                 return Err("get attribute of fd fail".to_string());
             }
 
             libc::cfmakeraw(&mut t as *mut termios);
             let ret = libc::cfsetispeed(&mut t as *mut termios, baudrate);
             if ret < 0 {
-                println!("set input speed fail");
                 return Err("set input speed fail".to_string());
             }
 
             let ret = libc::cfsetospeed(&mut t as *mut termios, baudrate);
             if ret < 0 {
-                println!("set ouput speed fail");
                 return Err("set output speed fail".to_string());
             }
 
             let ret = libc::tcsetattr(fd, TCSANOW, &t as *const termios);
             if ret < 0 {
-                println!("set terminal attribute fail");
                 return Err("set terminal attribute fail".to_string());
             }
         }
 
         Ok(TTYPort{fd: fd})
-
     }
 }
 
