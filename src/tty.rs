@@ -67,11 +67,21 @@ impl TTYPort {
 
         Ok(TTYPort{fd: fd})
     }
+
+    pub fn from_fd(fd: RawFd) -> Self {
+        TTYPort {fd}
+    }
 }
 
 impl AsRawFd for TTYPort {
     fn as_raw_fd(&self) -> RawFd {
         self.fd
+    }
+}
+
+impl Clone for TTYPort {
+    fn clone(&self) -> Self {
+        TTYPort::from_fd(self.fd)
     }
 }
 
