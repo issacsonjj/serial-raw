@@ -1,5 +1,5 @@
 use std::ffi::CString;
-use std::mem::uninitialized;
+use std::mem::MaybeUninit;
 
 use std::os::unix::prelude::*;
 use std::os::unix::io::{AsRawFd, RawFd};
@@ -38,7 +38,7 @@ impl TTYPort {
         };
 
         let mut t: termios = unsafe {
-            uninitialized()
+            MaybeUninit::zeroed().assume_init()
         };
 
         unsafe {
